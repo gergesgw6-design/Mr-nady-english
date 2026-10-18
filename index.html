@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مستر نادي عبيد التعليمية</title>
+    
+    <style>
+        :root {
+            --bg-main: #12141a;
+            --bg-card: #1c202a;
+            --primary: #10b981; /* أخضر زمردي */
+            --primary-hover: #059669;
+            --accent: #f59e0b; /* كهرماني دافئ */
+            --danger: #ef4444; 
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* خلفية تفاعلية متحركة */
+        body {
+            background: linear-gradient(135deg, #12141a, #1a202c, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* شاشة تسجيل الدخول الموحدة */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(18, 20, 26, 0.95);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            display: none;
+        }
+
+        /* الهيدر */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 2px solid var(--primary);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--danger);
+            color: #fff;
+        }
+
+        /* التنقل بين الأقسام */
+        .nav-tabs {
+            display: flex;
+            background-color: var(--bg-card);
+            padding: 0.5rem;
+            gap: 10px;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        /* المحتوى الرئيسي */
+        main {
+            flex: 1;
+            padding: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button.btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        button.btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-present {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .badge-absent {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .badge-paid {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .badge-unpaid {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .code-badge {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--accent);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* نافذة التفاصيل (Modal) */
+        #detailsModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .video-card {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 160px;
+            border: none;
+        }
+
+        .video-info {
+            padding: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة تسجيل الدخول الموحدة -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <h2>👨‍🏫 منصة مستر نادي عبيد</h2>
+            <p>أدخل بياناتك للدخول (أو كلمة سر المستر للتحكم)</p>
+            
+            <form id="unifiedLoginForm">
+                <div class="form-group">
+                    <label for="loginPhone">رقم تليفونك:</label>
+                    <input type="text" id="loginPhone" required placeholder="01xxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">كلمة السر:</label>
+                    <input type="password" id="loginPassword" required placeholder="أدخل كلمة السر...">
+                </div>
+                <button type="submit" class="btn">دخول</button>
+                <div id="loginErrorMsg" class="error-msg">بيانات الدخول غير صحيحة!</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تفاصيل الطالب المنبثقة (Modal) -->
+    <div id="detailsModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeDetailsModal()">✖</button>
+            <h2 id="modalStudentName" style="color: var(--primary); margin-bottom: 1rem;">تفاصيل الطالب</h2>
+            <div id="modalStudentInfo" style="line-height: 1.8; font-size: 0.95rem; margin-bottom: 1rem;">
+                <!-- معلومات الطالب وحالة الدفع والغياب -->
+            </div>
+            <div class="form-group">
+                <label>تحديث حالة مصاريف الشهر:</label>
+                <select id="modalPaidStatus" onchange="updatePaymentStatus(this.value)">
+                    <option value="false">لم يدفع</option>
+                    <option value="true">دفع الشهر</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- الهيدر -->
+    <header>
+        <h1 id="headerTitle">👨‍🏫 منصة مستر نادي عبيد</h1>
+        <button class="logout-btn" onclick="logout()">خروج 🚪</button>
+    </header>
+
+    <!-- واجهة الأدمن (مستر نادي) -->
+    <div id="adminView" style="display: none;">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('studentsTab', event)">👥 إدارة الطلاب</button>
+            <button class="tab-btn" onclick="switchTab('attendanceTab', event)">📋 الغياب والحضور</button>
+            <button class="tab-btn" onclick="switchTab('videosTab', event)">🎥 الفيديوهات</button>
+        </div>
+
+        <main>
+            <!-- قسم الطلاب -->
+            <section id="studentsTab" class="section active">
+                <div class="card">
+                    <h2>إضافة طالب جديد</h2>
+                    <form id="addStudentForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="stName">اسم الطالب:</label>
+                                <input type="text" id="stName" required placeholder="الاسم الرباعي...">
+                            </div>
+                            <div class="form-group">
+                                <label for="stPhone">رقم تليفون الطالب:</label>
+                                <input type="text" id="stPhone" required placeholder="01xxxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label for="parentPhone">رقم ولي الأمر:</label>
+                                <input type="text" id="parentPhone" required placeholder="01xxxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label for="stGrade">الصف الدراسي:</label>
+                                <select id="stGrade" required>
+                                    <option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option>
+                                    <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
+                                    <option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option>
+                                    <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                    <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+                                    <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="stPass">كلمة سر الطالب:</label>
+                                <input type="text" id="stPass" required placeholder="كلمة السر الخاصة به...">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">حفظ الطالب وتوليد الكود</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>قائمة الطلاب المسجلين وكلمات السر</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الكود</th>
+                                    <th>الاسم</th>
+                                    <th>الصف</th>
+                                    <th>التليفون</th>
+                                    <th>ولي الأمر</th>
+                                    <th>كلمة السر</th>
+                                    <th>المصاريف</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminStudentsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم الحضور والغياب -->
+            <section id="attendanceTab" class="section">
+                <div class="card">
+                    <h2>تسجيل الحضور اليومي</h2>
+                    <form id="markAttendanceForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="selectStudent">اختر الطالب:</label>
+                                <select id="selectStudent" required>
+                                    <option value="">-- اختر الطالب --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="attendanceStatus">الحالة:</label>
+                                <select id="attendanceStatus">
+                                    <option value="حاضر">حاضر</option>
+                                    <option value="غائب">غائب</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">تسجيل</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>سجل الحضور والغياب</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الكود</th>
+                                    <th>اسم الطالب</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ والوقت</th>
+                                    <th>التفاصيل</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceLogsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم الفيديوهات -->
+            <section id="videosTab" class="section">
+                <div class="card">
+                    <h2>إضافة فيديو تعليمي</h2>
+                    <form id="addVideoForm">
+                        <div class="form-group">
+                            <label for="vidTitle">عنوان الدرس:</label>
+                            <input type="text" id="vidTitle" required placeholder="عنوان الفيديو...">
+                        </div>
+                        <div class="form-group">
+                            <label for="vidUrl">رابط يوتيوب:</label>
+                            <input type="text" id="vidUrl" required placeholder="رابط يوتيوب...">
+                        </div>
+                        <button type="submit" class="btn">نشر الفيديو</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>الفيديوهات المتاحة</h2>
+                    <div class="video-grid" id="adminVideoGrid"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- واجهة الطالب -->
+    <div id="studentView" style="display: none;">
+        <main>
+            <div class="card">
+                <h2>أهلاً بك، <span id="studentWelcomeName" style="color: var(--primary);"></span> 👋</h2>
+                <p style="margin-top: 0.5rem;">الكود الخاص بك: <span id="studentDisplayCode" class="code-badge"></span> | الصف: <strong id="studentDisplayGrade" style="color: var(--accent);"></strong></p>
+                <p style="margin-top: 0.3rem;">حالة مصاريف الشهر: <span id="studentDisplayPaid" class="badge-unpaid">جاري التحميل...</span></p>
+            </div>
+
+            <div class="card">
+                <h2>سجل حضورك</h2>
+                <div class="table-container">
+                    <table>
+       
